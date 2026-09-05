@@ -69,3 +69,9 @@ The following work was done after the initial MVP and is not reflected in the se
 *   [x] **Hilt binding**: `di/RepositoryModule` uses `@Binds` to wire `PropertyRepositoryImpl` to the `PropertyRepository` interface, so use cases depend only on the abstraction.
 *   [x] **Use cases & ViewModels updated**: All use cases and both ViewModels (`PropertyListViewModel`, `PropertyDetailViewModel`) now operate on domain models exclusively.
 *   [x] **UI updated**: `PropertyAdapter` and the Compose `PropertyDetailScreen`/`PropertyDetailDrawer` consume domain models (`Property`, `PropertyDetail`, `Favorite`) instead of DTOs/entities.
+
+### Modularization: `:domain` Gradle Module
+*   [x] **Extracted `:domain` module**: `domain/model`, `domain/repository` (interface), and `domain/usecase` moved from `:app`'s source set into a standalone `:domain` Gradle module.
+*   [x] **Pure Kotlin/JVM, no Android dependency**: Uses the `org.jetbrains.kotlin.jvm` plugin (not `com.android.library`), depending only on `kotlinx-coroutines-core` and `javax.inject` — physically enforcing that domain code can never import Android, Room, Retrofit, or Moshi types.
+*   [x] **Wiring**: `:app` depends on `:domain` via `implementation(project(":domain"))`; package names unchanged so no call-site imports had to change. Hilt's annotation processor (running only in `:app`) still discovers the `@Inject`-annotated use case constructors across the module boundary, since JSR-330 annotations are `RUNTIME`-retained and visible on the compile classpath.
+*   [x] **Verified**: Clean `assembleDebug` build succeeds, with `:domain:compileKotlin`/`:domain:jar` running as an independent task ahead of `:app`'s compilation.
