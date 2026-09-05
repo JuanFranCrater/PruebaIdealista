@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.juanfbenitez.prueba.idealista.data.prefs.DetailDisplayMode
 import com.juanfbenitez.prueba.idealista.databinding.FragmentPropertyPageBinding
 import com.juanfbenitez.prueba.idealista.di.Dependencies
 import kotlinx.coroutines.launch
@@ -54,10 +55,16 @@ class PropertyOperationPageFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
+        val detailDisplayPreferences = Dependencies.provideDetailDisplayPreferences(requireContext())
         adapter = PropertyAdapter(
             onPropertyClick = { propertyCode ->
-                val action = PropertyListFragmentDirections.actionPropertyListFragmentToPropertyDetailFragment(propertyCode)
-                findNavController().navigate(action)
+                when (detailDisplayPreferences.mode.value) {
+                    DetailDisplayMode.DRAWER -> viewModel.selectPropertyForDrawer(propertyCode)
+                    DetailDisplayMode.FULL_SCREEN -> {
+                        val action = PropertyListFragmentDirections.actionPropertyListFragmentToPropertyDetailFragment(propertyCode)
+                        findNavController().navigate(action)
+                    }
+                }
             },
             onFavoriteClick = { propertyCode ->
                 viewModel.toggleFavorite(propertyCode)

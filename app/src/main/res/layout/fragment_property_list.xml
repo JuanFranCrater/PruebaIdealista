@@ -21,6 +21,7 @@
         android:minHeight="?attr/actionBarSize"
         android:background="@color/white"
         android:elevation="0dp"
+        app:menu="@menu/menu_property_list"
         app:title="Juan Fran's idealista"
         app:titleTextAppearance="@style/TextAppearance.Idealista.ToolbarTitle"
         app:layout_constraintEnd_toEndOf="parent"
@@ -70,6 +71,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tabDivider" />
+
+    <!--
+        Compose overlay hosting the property detail drawer (PropertyDetailDrawer). Declared last
+        so it draws on top of the XML list screen. It only composes content (and thus only
+        intercepts touches) while a property is selected for the drawer; otherwise it's an empty
+        canvas and taps pass through to the views below.
+    -->
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/detailDrawerComposeView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

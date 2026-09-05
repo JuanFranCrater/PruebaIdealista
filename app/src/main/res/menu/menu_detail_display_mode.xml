@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/group_detail_display_mode" android:checkableBehavior="single">
+        <item
+            android:id="@+id/mode_drawer"
+            android:title="@string/detail_mode_drawer" />
+        <item
+            android:id="@+id/mode_full_screen"
+            android:title="@string/detail_mode_full_screen" />
+    </group>
+
+</menu>

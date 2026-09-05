@@ -18,8 +18,7 @@
     <fragment
         android:id="@+id/propertyDetailFragment"
         android:name="com.juanfbenitez.prueba.idealista.ui.detail.PropertyDetailFragment"
-        android:label="Property Detail"
-        tools:layout="@layout/fragment_property_detail">
+        android:label="Property Detail">
         <argument
             android:name="propertyCode"
             app:argType="string" />

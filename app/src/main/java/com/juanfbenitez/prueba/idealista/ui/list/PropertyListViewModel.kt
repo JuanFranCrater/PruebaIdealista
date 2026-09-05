@@ -37,6 +37,11 @@ class PropertyListViewModel(
     private val _selectedOperation = MutableStateFlow(PropertyOperation.SALE)
     val selectedOperation: StateFlow<String> = _selectedOperation.asStateFlow()
 
+    private val _selectedPropertyForDrawer = MutableStateFlow<String?>(null)
+
+    /** Property code currently shown in the detail drawer panel, or null when it's closed. */
+    val selectedPropertyForDrawer: StateFlow<String?> = _selectedPropertyForDrawer.asStateFlow()
+
     init {
         loadProperties()
     }
@@ -86,5 +91,15 @@ class PropertyListViewModel(
         viewModelScope.launch {
             repository.toggleFavorite(propertyCode)
         }
+    }
+
+    /** Opens the detail drawer panel for [propertyCode] (used in [com.juanfbenitez.prueba.idealista.data.prefs.DetailDisplayMode.DRAWER] mode). */
+    fun selectPropertyForDrawer(propertyCode: String) {
+        _selectedPropertyForDrawer.value = propertyCode
+    }
+
+    /** Closes the detail drawer panel. */
+    fun clearDrawerSelection() {
+        _selectedPropertyForDrawer.value = null
     }
 }

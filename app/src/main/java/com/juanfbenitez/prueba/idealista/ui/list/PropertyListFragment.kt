@@ -4,15 +4,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.juanfbenitez.prueba.idealista.R
+import com.juanfbenitez.prueba.idealista.data.prefs.DetailDisplayMode
+import com.juanfbenitez.prueba.idealista.data.prefs.DetailDisplayPreferences
 import com.juanfbenitez.prueba.idealista.databinding.FragmentPropertyListBinding
 import com.juanfbenitez.prueba.idealista.di.Dependencies
-import androidx.viewpager2.widget.ViewPager2
+import com.juanfbenitez.prueba.idealista.ui.detail.compose.PropertyDetailDrawer
+import com.juanfbenitez.prueba.idealista.ui.theme.PruebaIdealistaTheme
 
 class PropertyListFragment : Fragment() {
 
@@ -24,6 +32,7 @@ class PropertyListFragment : Fragment() {
     }
 
     private lateinit var pagerAdapter: PropertyPagerAdapter
+    private lateinit var detailDisplayPreferences: DetailDisplayPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,8 +45,11 @@ class PropertyListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        detailDisplayPreferences = Dependencies.provideDetailDisplayPreferences(requireContext())
         setupStatusBarInsets()
         setupOperationTabs()
+        setupToolbar()
+        setupDetailDrawer()
     }
 
     private fun setupStatusBarInsets() {
@@ -67,6 +79,61 @@ class PropertyListFragment : Fragment() {
         TabLayoutMediator(binding.operationTabLayout, binding.viewPager) { tab, position ->
             tab.text = if (position == 0) getString(R.string.tab_sale) else getString(R.string.tab_rent)
         }.attach()
+    }
+
+    /** Wires the toolbar's gear icon to a popup menu letting the user pick the detail display mode. */
+    private fun setupToolbar() {
+        binding.toolbar.setOnMenuItemClickListener { item ->
+            if (item.itemId == R.id.action_settings) {
+                showDetailDisplayModeMenu()
+                true
+            } else {
+                false
+            }
+        }
+    }
+
+    private fun showDetailDisplayModeMenu() {
+        val anchor = binding.toolbar.findViewById<View>(R.id.action_settings) ?: binding.toolbar
+        val popup = PopupMenu(requireContext(), anchor)
+        popup.menuInflater.inflate(R.menu.menu_detail_display_mode, popup.menu)
+
+        val checkedId = when (detailDisplayPreferences.mode.value) {
+            DetailDisplayMode.DRAWER -> R.id.mode_drawer
+            DetailDisplayMode.FULL_SCREEN -> R.id.mode_full_screen
+        }
+        popup.menu.findItem(checkedId)?.isChecked = true
+
+        popup.setOnMenuItemClickListener { item ->
+            val newMode = when (item.itemId) {
+                R.id.mode_drawer -> DetailDisplayMode.DRAWER
+                R.id.mode_full_screen -> DetailDisplayMode.FULL_SCREEN
+                else -> return@setOnMenuItemClickListener false
+            }
+            detailDisplayPreferences.setMode(newMode)
+            true
+        }
+        popup.show()
+    }
+
+    /**
+     * Hosts the [PropertyDetailDrawer] Compose asset on top of the (XML) list screen so the
+     * "drawer" [DetailDisplayMode] can live side-by-side with the property list without
+     * navigating away, while reusing the exact same detail UI as the full-screen destination.
+     */
+    private fun setupDetailDrawer() {
+        binding.detailDrawerComposeView.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                PruebaIdealistaTheme {
+                    val selectedCode by viewModel.selectedPropertyForDrawer.collectAsStateWithLifecycle()
+                    PropertyDetailDrawer(
+                        propertyCode = selectedCode,
+                        onDismiss = { viewModel.clearDrawerSelection() }
+                    )
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {
