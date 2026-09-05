@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.juanfbenitez.prueba.idealista.data.api.model.PropertyDTO
 import com.juanfbenitez.prueba.idealista.data.repository.PropertyRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,26 +33,24 @@ class PropertyListViewModel(
 ) : ViewModel() {
 
     private val _properties = MutableStateFlow<List<PropertyDTO>?>(null)
+    private val _loadError = MutableStateFlow<String?>(null)
     private val _selectedOperation = MutableStateFlow(PropertyOperation.SALE)
     val selectedOperation: StateFlow<String> = _selectedOperation.asStateFlow()
-    private val _uiState = MutableStateFlow<PropertyListUiState>(PropertyListUiState.Loading)
-    val uiState: StateFlow<PropertyListUiState> = _uiState.asStateFlow()
 
     init {
-        observeData()
         loadProperties()
     }
 
-    private fun observeData() {
-        viewModelScope.launch {
-            combine(
-                _properties,
-                repository.getAllFavorites(),
-                _selectedOperation
-            ) { properties, favorites, operation ->
-                if (properties == null) {
-                    PropertyListUiState.Loading
-                } else {
+    /**
+     * Builds a per-tab/page state stream filtered to [operation], so each page of the
+     * swipeable ViewPager2 (Buy/Rent) observes only the properties it needs to show.
+     */
+    fun observeProperties(operation: String): Flow<PropertyListUiState> =
+        combine(_properties, repository.getAllFavorites(), _loadError) { properties, favorites, error ->
+            when {
+                error != null -> PropertyListUiState.Error(error)
+                properties == null -> PropertyListUiState.Loading
+                else -> {
                     val favoritesMap = favorites.associateBy { it.propertyCode }
                     val uiModels = properties
                         .filter { it.operation == operation }
@@ -65,11 +64,8 @@ class PropertyListViewModel(
                         }
                     PropertyListUiState.Success(uiModels)
                 }
-            }.collect {
-                _uiState.value = it
             }
         }
-    }
 
     fun loadProperties() {
         viewModelScope.launch {
@@ -77,7 +73,7 @@ class PropertyListViewModel(
                 val properties = repository.getPropertyList()
                 _properties.value = properties
             } catch (e: Exception) {
-                _uiState.value = PropertyListUiState.Error(e.message ?: "Unknown error")
+                _loadError.value = e.message ?: "Unknown error"
             }
         }
     }
