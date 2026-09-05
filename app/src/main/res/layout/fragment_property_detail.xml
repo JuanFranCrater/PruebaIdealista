@@ -10,14 +10,19 @@
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar">
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:contentScrim="?attr/colorPrimary"
+            app:collapsedTitleTextColor="@color/white"
+            app:contentScrim="@color/idealista_black"
+            app:expandedTitleTextColor="@color/white"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:scrimAnimationDuration="200"
+            app:statusBarScrim="@color/idealista_black"
             app:toolbarId="@+id/toolbar">
 
             <androidx.viewpager2.widget.ViewPager2
@@ -49,10 +54,14 @@
 
             <TextView
                 android:id="@+id/favoriteDateText"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:textColor="?attr/colorAccent"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_badge_lime"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
+                android:textColor="@color/idealista_black"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 android:visibility="gone"
                 tools:text="Favorited on: 2023-10-27"
@@ -60,23 +69,27 @@
 
             <TextView
                 android:id="@+id/priceText"
+                style="@style/TextAppearance.Idealista.Price"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorPrimary"
-                android:textStyle="bold"
+                android:textSize="26sp"
                 tools:text="1.200.000 €" />
 
             <TextView
                 android:id="@+id/typeText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/idealista_gray_dark"
+                android:textSize="15sp"
                 tools:text="Piso en Venta" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="16dp"
+                app:dividerColor="@color/idealista_divider" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -95,12 +108,18 @@
                         android:id="@+id/roomsText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/idealista_black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
                         tools:text="3" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/rooms" />
+                        android:layout_marginTop="2dp"
+                        android:text="@string/rooms"
+                        android:textColor="@color/idealista_gray"
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -114,12 +133,18 @@
                         android:id="@+id/bathsText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/idealista_black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
                         tools:text="2" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/bathrooms" />
+                        android:layout_marginTop="2dp"
+                        android:text="@string/bathrooms"
+                        android:textColor="@color/idealista_gray"
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -133,12 +158,18 @@
                         android:id="@+id/areaText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/idealista_black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
                         tools:text="120 m²" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/size" />
+                        android:layout_marginTop="2dp"
+                        android:text="@string/size"
+                        android:textColor="@color/idealista_gray"
+                        android:textSize="12sp" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -147,12 +178,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="16dp"
+                app:dividerColor="@color/idealista_divider" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/description"
+                android:textColor="@color/idealista_black"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -160,18 +194,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:textColor="@color/idealista_gray_dark"
+                android:textSize="14sp"
                 tools:text="Precioso piso con vistas al mar..." />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="16dp"
+                app:dividerColor="@color/idealista_divider" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/characteristics"
+                android:textColor="@color/idealista_black"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -179,13 +218,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                tools:text="Ascensor: Sí\nExterior: Sí\nEstado: Buen estado" />
+                android:lineSpacingExtra="4dp"
+                android:textColor="@color/idealista_gray_dark"
+                android:textSize="14sp"
+                tools:text="Lift: Yes\nExterior: Yes\nStatus: Good condition" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/favoriteFab"
+        style="@style/Widget.Idealista.Fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"

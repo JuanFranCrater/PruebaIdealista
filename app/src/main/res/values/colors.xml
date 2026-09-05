@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
+    <!-- idealista brand palette -->
+    <color name="idealista_primary">#DAEE6A</color>
+    <color name="idealista_primary_dark">#B9CA5A</color>
+    <color name="idealista_secondary">#B62682</color>
+    <color name="idealista_secondary_dark">#9B206E</color>
+    <color name="idealista_black">#1A1A1A</color>
+    <color name="idealista_gray_dark">#4A4A4A</color>
+    <color name="idealista_gray">#767676</color>
+    <color name="idealista_divider">#E0E0E0</color>
+    <color name="idealista_red">#E1332B</color>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

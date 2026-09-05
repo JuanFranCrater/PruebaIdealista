@@ -22,11 +22,18 @@ data class PropertyItemUiModel(
     val dateFavorited: Long? = null
 )
 
+object PropertyOperation {
+    const val SALE = "sale"
+    const val RENT = "rent"
+}
+
 class PropertyListViewModel(
     private val repository: PropertyRepository
 ) : ViewModel() {
 
     private val _properties = MutableStateFlow<List<PropertyDTO>?>(null)
+    private val _selectedOperation = MutableStateFlow(PropertyOperation.SALE)
+    val selectedOperation: StateFlow<String> = _selectedOperation.asStateFlow()
     private val _uiState = MutableStateFlow<PropertyListUiState>(PropertyListUiState.Loading)
     val uiState: StateFlow<PropertyListUiState> = _uiState.asStateFlow()
 
@@ -37,19 +44,25 @@ class PropertyListViewModel(
 
     private fun observeData() {
         viewModelScope.launch {
-            combine(_properties, repository.getAllFavorites()) { properties, favorites ->
+            combine(
+                _properties,
+                repository.getAllFavorites(),
+                _selectedOperation
+            ) { properties, favorites, operation ->
                 if (properties == null) {
                     PropertyListUiState.Loading
                 } else {
                     val favoritesMap = favorites.associateBy { it.propertyCode }
-                    val uiModels = properties.map { property ->
-                        val favorite = favoritesMap[property.propertyCode]
-                        PropertyItemUiModel(
-                            property = property,
-                            isFavorite = favorite != null,
-                            dateFavorited = favorite?.dateFavorited
-                        )
-                    }
+                    val uiModels = properties
+                        .filter { it.operation == operation }
+                        .map { property ->
+                            val favorite = favoritesMap[property.propertyCode]
+                            PropertyItemUiModel(
+                                property = property,
+                                isFavorite = favorite != null,
+                                dateFavorited = favorite?.dateFavorited
+                            )
+                        }
                     PropertyListUiState.Success(uiModels)
                 }
             }.collect {
@@ -67,6 +80,10 @@ class PropertyListViewModel(
                 _uiState.value = PropertyListUiState.Error(e.message ?: "Unknown error")
             }
         }
+    }
+
+    fun selectOperation(operation: String) {
+        _selectedOperation.value = operation
     }
 
     fun toggleFavorite(propertyCode: String) {

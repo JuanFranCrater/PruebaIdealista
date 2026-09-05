@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -13,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.tabs.TabLayout
 import com.juanfbenitez.prueba.idealista.databinding.FragmentPropertyListBinding
 import com.juanfbenitez.prueba.idealista.ui.list.PropertyListFragmentDirections
 import com.juanfbenitez.prueba.idealista.di.Dependencies
@@ -40,8 +43,36 @@ class PropertyListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupStatusBarInsets()
         setupRecyclerView()
+        setupOperationTabs()
         observeUiState()
+    }
+
+    private fun setupStatusBarInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.statusBarScrim) { scrimView, insets ->
+            val statusBarInset = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+            scrimView.layoutParams = scrimView.layoutParams.apply {
+                height = statusBarInset.top
+            }
+            scrimView.requestLayout()
+            insets
+        }
+    }
+
+    private fun setupOperationTabs() {
+        val currentPosition = if (viewModel.selectedOperation.value == PropertyOperation.SALE) 0 else 1
+        binding.operationTabLayout.getTabAt(currentPosition)?.select()
+
+        binding.operationTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                val operation = if (tab.position == 0) PropertyOperation.SALE else PropertyOperation.RENT
+                viewModel.selectOperation(operation)
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) = Unit
+            override fun onTabReselected(tab: TabLayout.Tab) = Unit
+        })
     }
 
     private fun setupRecyclerView() {
