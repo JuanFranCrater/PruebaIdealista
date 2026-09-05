@@ -30,6 +30,10 @@ data class PropertyItemUiModel(
 object PropertyOperation {
     const val SALE = "sale"
     const val RENT = "rent"
+
+    /** Pseudo-operation for the third tab: not a real listing operation from the API, it
+     * selects properties by favorite status instead of by [Property.operation]. */
+    const val FAVORITES = "favorites"
 }
 
 @HiltViewModel
@@ -54,8 +58,10 @@ class PropertyListViewModel @Inject constructor(
     }
 
     /**
-     * Builds a per-tab/page state stream filtered to [operation], so each page of the
-     * swipeable ViewPager2 (Buy/Rent) observes only the properties it needs to show.
+     * Builds a per-tab/page state stream for [operation], so each page of the swipeable
+     * ViewPager2 (Buy/Rent/Favorites) observes only the properties it needs to show. The
+     * [PropertyOperation.FAVORITES] tab shows every favorited property regardless of its
+     * sale/rent operation; the other tabs filter by [Property.operation] as usual.
      */
     fun observeProperties(operation: String): Flow<PropertyListUiState> =
         combine(_properties, getAllFavoritesUseCase(), _loadError) { properties, favorites, error ->
@@ -64,16 +70,19 @@ class PropertyListViewModel @Inject constructor(
                 properties == null -> PropertyListUiState.Loading
                 else -> {
                     val favoritesMap = favorites.associateBy { it.propertyCode }
-                    val uiModels = properties
-                        .filter { it.operation == operation }
-                        .map { property ->
-                            val favorite = favoritesMap[property.propertyCode]
-                            PropertyItemUiModel(
-                                property = property,
-                                isFavorite = favorite != null,
-                                dateFavorited = favorite?.dateFavorited
-                            )
-                        }
+                    val filtered = if (operation == PropertyOperation.FAVORITES) {
+                        properties.filter { favoritesMap.containsKey(it.propertyCode) }
+                    } else {
+                        properties.filter { it.operation == operation }
+                    }
+                    val uiModels = filtered.map { property ->
+                        val favorite = favoritesMap[property.propertyCode]
+                        PropertyItemUiModel(
+                            property = property,
+                            isFavorite = favorite != null,
+                            dateFavorited = favorite?.dateFavorited
+                        )
+                    }
                     PropertyListUiState.Success(uiModels)
                 }
             }

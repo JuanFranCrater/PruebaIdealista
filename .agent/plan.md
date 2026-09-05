@@ -75,3 +75,15 @@ The following work was done after the initial MVP and is not reflected in the se
 *   [x] **Pure Kotlin/JVM, no Android dependency**: Uses the `org.jetbrains.kotlin.jvm` plugin (not `com.android.library`), depending only on `kotlinx-coroutines-core` and `javax.inject` — physically enforcing that domain code can never import Android, Room, Retrofit, or Moshi types.
 *   [x] **Wiring**: `:app` depends on `:domain` via `implementation(project(":domain"))`; package names unchanged so no call-site imports had to change. Hilt's annotation processor (running only in `:app`) still discovers the `@Inject`-annotated use case constructors across the module boundary, since JSR-330 annotations are `RUNTIME`-retained and visible on the compile classpath.
 *   [x] **Verified**: Clean `assembleDebug` build succeeds, with `:domain:compileKotlin`/`:domain:jar` running as an independent task ahead of `:app`'s compilation.
+
+### Repository Hygiene After Modularization
+*   [x] **`domain/.gitignore`**: Added `/build` (mirroring `app/.gitignore`) so the new `:domain` module's Gradle/Kotlin build output (compiled classes, incremental caches, packaged jar) isn't tracked.
+*   [x] **`.gitignore`**: Added `/.idea/kotlinc.xml`, an IDE-generated Kotlin-plugin-version marker created after adding the JVM module, consistent with the other machine-generated `.idea/*` entries already ignored.
+*   [x] **Untracked stray file**: Ran `git rm --cached .idea/kotlinc.xml` to remove it from the index since the IDE had staged it before the ignore rule existed.
+
+### Favorites Tab
+*   [x] **Third list tab**: Added a "Favorites" tab alongside Buy/Rent on the property list screen, showing every favorited property regardless of its sale/rent operation.
+*   [x] **`PropertyOperation.FAVORITES`**: New pseudo-operation constant distinguishing this tab from the real `sale`/`rent` API operations.
+*   [x] **`PropertyListViewModel.observeProperties`**: Filters by favorite status instead of `Property.operation` when the requested tab is `FAVORITES`, reusing the same favorites `Flow` all tabs already observe (so favoriting/unfavoriting anywhere updates all tabs live).
+*   [x] **`PropertyPagerAdapter`**: Now backs 3 ViewPager2 pages (sale, rent, favorites); `PropertyOperationPageFragment` required no changes since it's already parameterized by operation string.
+*   [x] **UI**: `PropertyListFragment`'s `TabLayoutMediator` labels the third tab via the new `tab_favorites` string resource.

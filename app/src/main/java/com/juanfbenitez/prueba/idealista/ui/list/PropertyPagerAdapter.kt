@@ -6,14 +6,15 @@ import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
 /**
- * Backs the ViewPager2 in [PropertyListFragment] with two fixed pages: Buy (sale) and Rent.
+ * Backs the ViewPager2 in [PropertyListFragment] with three fixed pages: Buy (sale), Rent, and
+ * Favorites.
  */
 class PropertyPagerAdapter(
     fragmentManager: FragmentManager,
     lifecycle: Lifecycle
 ) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
-    private val operations = listOf(PropertyOperation.SALE, PropertyOperation.RENT)
+    private val operations = listOf(PropertyOperation.SALE, PropertyOperation.RENT, PropertyOperation.FAVORITES)
 
     override fun getItemCount(): Int = operations.size
 

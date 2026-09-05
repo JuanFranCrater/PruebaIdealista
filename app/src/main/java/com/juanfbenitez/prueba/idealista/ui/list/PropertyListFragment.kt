@@ -78,7 +78,11 @@ class PropertyListFragment : Fragment() {
         })
 
         TabLayoutMediator(binding.operationTabLayout, binding.viewPager) { tab, position ->
-            tab.text = if (position == 0) getString(R.string.tab_sale) else getString(R.string.tab_rent)
+            tab.text = when (position) {
+                0 -> getString(R.string.tab_sale)
+                1 -> getString(R.string.tab_rent)
+                else -> getString(R.string.tab_favorites)
+            }
         }.attach()
     }
 
