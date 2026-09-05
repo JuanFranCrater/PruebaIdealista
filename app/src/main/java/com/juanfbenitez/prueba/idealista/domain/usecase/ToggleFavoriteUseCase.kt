@@ -1,6 +1,6 @@
 package com.juanfbenitez.prueba.idealista.domain.usecase
 
-import com.juanfbenitez.prueba.idealista.data.repository.PropertyRepository
+import com.juanfbenitez.prueba.idealista.domain.repository.PropertyRepository
 import javax.inject.Inject
 
 /** Toggles the favorite status of a property. */

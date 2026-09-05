@@ -2,7 +2,7 @@ package com.juanfbenitez.prueba.idealista.ui.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.juanfbenitez.prueba.idealista.data.api.model.PropertyDTO
+import com.juanfbenitez.prueba.idealista.domain.model.Property
 import com.juanfbenitez.prueba.idealista.domain.usecase.GetAllFavoritesUseCase
 import com.juanfbenitez.prueba.idealista.domain.usecase.GetPropertyListUseCase
 import com.juanfbenitez.prueba.idealista.domain.usecase.ToggleFavoriteUseCase
@@ -22,7 +22,7 @@ sealed class PropertyListUiState {
 }
 
 data class PropertyItemUiModel(
-    val property: PropertyDTO,
+    val property: Property,
     val isFavorite: Boolean,
     val dateFavorited: Long? = null
 )
@@ -39,7 +39,7 @@ class PropertyListViewModel @Inject constructor(
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase
 ) : ViewModel() {
 
-    private val _properties = MutableStateFlow<List<PropertyDTO>?>(null)
+    private val _properties = MutableStateFlow<List<Property>?>(null)
     private val _loadError = MutableStateFlow<String?>(null)
     private val _selectedOperation = MutableStateFlow(PropertyOperation.SALE)
     val selectedOperation: StateFlow<String> = _selectedOperation.asStateFlow()

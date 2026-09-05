@@ -37,3 +37,35 @@ Build a robust Android application in Kotlin using XML Views and a modern archit
 
 > [!NOTE]
 > All tasks have been marked as COMPLETED and the final product has been verified by the Quality Assurance (Critic) agent.
+
+---
+
+## Addendum: Later Changes Not Covered Above
+
+The following work was done after the initial MVP and is not reflected in the sections above.
+
+### Compose Detail Presentation
+*   [x] **Compose Detail Screen**: `PropertyDetailScreen` (Compose) implemented and shared between two presentations instead of a single XML-only detail screen.
+*   [x] **Drawer Presentation**: `PropertyDetailDrawer` (Compose) shows the detail as a bottom-sheet-style panel on top of the XML list screen (animated in/out), reusing `PropertyDetailScreen`.
+*   [x] **Full-Screen Presentation**: `PropertyDetailFragment` hosts the same `PropertyDetailScreen` via a `ComposeView` as the dedicated navigation destination.
+
+### Display Mode Preference
+*   [x] **`DetailDisplayMode` / `DetailDisplayPreferences`**: `SharedPreferences`-backed, exposed as a `StateFlow`, letting the user pick between `DRAWER` and `FULL_SCREEN` detail presentation from a toolbar gear-icon menu on the list screen.
+
+### Use Case Layer
+*   [x] **`domain/usecase` package**: Introduced `GetPropertyListUseCase`, `GetPropertyDetailUseCase`, `GetAllFavoritesUseCase`, `IsFavoriteUseCase`, `ToggleFavoriteUseCase` so ViewModels (and any future screens) call use cases instead of `PropertyRepository` directly.
+
+### Dependency Injection with Hilt
+*   [x] **Hilt Setup**: Added Hilt Gradle plugin/dependencies (KSP), `IdealistaApplication` (`@HiltAndroidApp`), manifest updated to reference it.
+*   [x] **DI Modules**: `di/NetworkModule` (OkHttp/Retrofit/`IdealistaApi`) and `di/DatabaseModule` (Room `IdealistaDatabase`/`FavoriteDao`) replace the old manual `Dependencies` singleton object (removed).
+*   [x] **Injectable Classes**: `PropertyRepository` and `DetailDisplayPreferences` now use `@Inject constructor`.
+*   [x] **ViewModels via Hilt**: `PropertyListViewModel` is a `@HiltViewModel`; `PropertyDetailViewModel` uses Hilt assisted injection (`@AssistedInject`/`@AssistedFactory`) to inject the runtime-only `propertyCode`.
+*   [x] **Fragments/Activity**: `MainActivity` and all fragments (`PropertyListFragment`, `PropertyOperationPageFragment`, `PropertyDetailFragment`) annotated `@AndroidEntryPoint`; manual `ViewModelProvider.Factory` classes removed in favor of `by viewModels()` and field injection.
+*   [x] **Compose/Hilt Bridge**: `PropertyDetailDrawer` resolves `PropertyDetailViewModel.Factory` via a Hilt `@EntryPoint` (`PropertyDetailViewModelFactoryEntryPoint`) since Compose code can't use constructor injection directly.
+
+### Clean Architecture Compliance
+*   [x] **Domain models**: Added framework-free `domain/model` classes (`Property`, `Price`, `PropertyDetail`, `PropertyCharacteristics`, `Favorite`) so DTOs (Moshi) and Room entities no longer leak into `domain`/`ui`.
+*   [x] **Repository abstraction**: `domain/repository/PropertyRepository` is now an interface; the old concrete class was renamed to `data/repository/PropertyRepositoryImpl`, which implements it and maps data-layer types to domain models via `data/mapper/PropertyMappers.kt`.
+*   [x] **Hilt binding**: `di/RepositoryModule` uses `@Binds` to wire `PropertyRepositoryImpl` to the `PropertyRepository` interface, so use cases depend only on the abstraction.
+*   [x] **Use cases & ViewModels updated**: All use cases and both ViewModels (`PropertyListViewModel`, `PropertyDetailViewModel`) now operate on domain models exclusively.
+*   [x] **UI updated**: `PropertyAdapter` and the Compose `PropertyDetailScreen`/`PropertyDetailDrawer` consume domain models (`Property`, `PropertyDetail`, `Favorite`) instead of DTOs/entities.

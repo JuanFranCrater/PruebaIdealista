@@ -36,8 +36,8 @@ class PropertyAdapter(
             binding.apply {
                 priceText.text = root.context.getString(
                     R.string.price_format,
-                    property.priceInfo.price.amount,
-                    property.priceInfo.price.currencySuffix
+                    property.price.amount,
+                    property.price.currencySuffix
                 )
                 addressText.text = property.address
                 detailsText.text = root.context.getString(

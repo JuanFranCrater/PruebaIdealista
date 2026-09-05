@@ -39,10 +39,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.juanfbenitez.prueba.idealista.R
-import com.juanfbenitez.prueba.idealista.data.api.model.ImageDTO
-import com.juanfbenitez.prueba.idealista.data.api.model.MoreCharacteristicsDTO
-import com.juanfbenitez.prueba.idealista.data.api.model.PropertyDetailDTO
-import com.juanfbenitez.prueba.idealista.data.db.FavoriteEntity
+import com.juanfbenitez.prueba.idealista.domain.model.Favorite
+import com.juanfbenitez.prueba.idealista.domain.model.PropertyCharacteristics
+import com.juanfbenitez.prueba.idealista.domain.model.PropertyDetail
 import com.juanfbenitez.prueba.idealista.ui.detail.PropertyDetailUiState
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -114,12 +113,12 @@ fun PropertyDetailScreen(
 
 @Composable
 private fun PropertyDetailSuccessContent(
-    detail: PropertyDetailDTO,
-    favorite: FavoriteEntity?,
+    detail: PropertyDetail,
+    favorite: Favorite?,
     onFavoriteClick: () -> Unit
 ) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        item { PropertyImagePager(images = detail.multimedia?.images.orEmpty()) }
+        item { PropertyImagePager(images = detail.images) }
         item {
             PropertyDetailBody(
                 detail = detail,
@@ -131,7 +130,7 @@ private fun PropertyDetailSuccessContent(
 }
 
 @Composable
-private fun PropertyImagePager(images: List<ImageDTO>) {
+private fun PropertyImagePager(images: List<String>) {
     if (images.isEmpty()) {
         Box(
             modifier = Modifier
@@ -152,7 +151,7 @@ private fun PropertyImagePager(images: List<ImageDTO>) {
             modifier = Modifier.fillMaxSize()
         ) { page ->
             AsyncImage(
-                model = images[page].url,
+                model = images[page],
                 contentDescription = androidx.compose.ui.res.stringResource(R.string.property_image),
                 contentScale = androidx.compose.ui.layout.ContentScale.Crop,
                 placeholder = androidx.compose.ui.res.painterResource(R.drawable.placeholder),
@@ -198,12 +197,12 @@ private fun PagerIndicator(pageCount: Int, currentPage: Int, modifier: Modifier 
 
 @Composable
 private fun PropertyDetailBody(
-    detail: PropertyDetailDTO,
-    favorite: FavoriteEntity?,
+    detail: PropertyDetail,
+    favorite: Favorite?,
     onFavoriteClick: () -> Unit
 ) {
     val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()) }
-    val characteristics: MoreCharacteristicsDTO? = detail.moreCharacteristics
+    val characteristics: PropertyCharacteristics? = detail.characteristics
 
     Column(modifier = Modifier.padding(16.dp)) {
         if (favorite != null) {
@@ -234,8 +233,8 @@ private fun PropertyDetailBody(
                 Text(
                     text = androidx.compose.ui.res.stringResource(
                         R.string.price_format,
-                        detail.price,
-                        detail.priceInfo.currencySuffix
+                        detail.price.amount,
+                        detail.price.currencySuffix
                     ),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
@@ -272,11 +271,11 @@ private fun PropertyDetailBody(
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
             StatColumn(
-                value = characteristics?.roomNumber?.toString() ?: "-",
+                value = characteristics?.rooms?.toString() ?: "-",
                 label = androidx.compose.ui.res.stringResource(R.string.rooms)
             )
             StatColumn(
-                value = characteristics?.bathNumber?.toString() ?: "-",
+                value = characteristics?.bathrooms?.toString() ?: "-",
                 label = androidx.compose.ui.res.stringResource(R.string.bathrooms)
             )
             StatColumn(
@@ -296,7 +295,7 @@ private fun PropertyDetailBody(
             fontWeight = FontWeight.Bold
         )
         ExpandableDescription(
-            text = detail.propertyComment.orEmpty(),
+            text = detail.description.orEmpty(),
             modifier = Modifier.padding(top = 8.dp)
         )
 
@@ -311,8 +310,8 @@ private fun PropertyDetailBody(
             val yes = androidx.compose.ui.res.stringResource(R.string.yes)
             val no = androidx.compose.ui.res.stringResource(R.string.no)
             characteristics?.let {
-                CharacteristicLine(androidx.compose.ui.res.stringResource(R.string.lift), if (it.lift == true) yes else no)
-                CharacteristicLine(androidx.compose.ui.res.stringResource(R.string.exterior), if (it.exterior == true) yes else no)
+                CharacteristicLine(androidx.compose.ui.res.stringResource(R.string.lift), if (it.hasLift == true) yes else no)
+                CharacteristicLine(androidx.compose.ui.res.stringResource(R.string.exterior), if (it.isExterior == true) yes else no)
                 it.status?.let { status -> CharacteristicLine(androidx.compose.ui.res.stringResource(R.string.status), status) }
                 it.floor?.let { floor -> CharacteristicLine(androidx.compose.ui.res.stringResource(R.string.floor), floor) }
             }

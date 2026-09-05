@@ -3,8 +3,8 @@ package com.juanfbenitez.prueba.idealista.ui.detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.juanfbenitez.prueba.idealista.data.api.model.PropertyDetailDTO
-import com.juanfbenitez.prueba.idealista.data.db.FavoriteEntity
+import com.juanfbenitez.prueba.idealista.domain.model.Favorite
+import com.juanfbenitez.prueba.idealista.domain.model.PropertyDetail
 import com.juanfbenitez.prueba.idealista.domain.usecase.GetAllFavoritesUseCase
 import com.juanfbenitez.prueba.idealista.domain.usecase.GetPropertyDetailUseCase
 import com.juanfbenitez.prueba.idealista.domain.usecase.ToggleFavoriteUseCase
@@ -17,8 +17,8 @@ import kotlinx.coroutines.launch
 sealed class PropertyDetailUiState {
     object Loading : PropertyDetailUiState()
     data class Success(
-        val detail: PropertyDetailDTO,
-        val favorite: FavoriteEntity?
+        val detail: PropertyDetail,
+        val favorite: Favorite?
     ) : PropertyDetailUiState()
     data class Error(val message: String) : PropertyDetailUiState()
 }
@@ -41,7 +41,7 @@ class PropertyDetailViewModel @AssistedInject constructor(
         fun create(propertyCode: String): PropertyDetailViewModel
     }
 
-    private val _detail = MutableStateFlow<PropertyDetailDTO?>(null)
+    private val _detail = MutableStateFlow<PropertyDetail?>(null)
     private val _uiState = MutableStateFlow<PropertyDetailUiState>(PropertyDetailUiState.Loading)
     val uiState: StateFlow<PropertyDetailUiState> = _uiState.asStateFlow()
 
