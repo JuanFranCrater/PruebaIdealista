@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">PruebaIdealista</string>
+    <string name="favorite">Favorite</string>
+    <string name="property_image">Property image</string>
+    <string name="property_details_format">%1$d hab. | %2$d baños | %3$.0f m²</string>
+    <string name="price_format">%1$,.0f %2$s</string>
+    <string name="loading">Loading properties...</string>
+    <string name="error_loading">Error loading properties</string>
+    <string name="retry">Retry</string>
+    <string name="rooms">Rooms</string>
+    <string name="bathrooms">Bathrooms</string>
+    <string name="size">Size</string>
+    <string name="description">Description</string>
+    <string name="characteristics">Characteristics</string>
+    <string name="favorited_on">Favorited on: %1$s</string>
+    <string name="area_format">%1$.0f m²</string>
+    <string name="lift">Lift</string>
+    <string name="exterior">Exterior</string>
+    <string name="status">Status</string>
+    <string name="floor">Floor</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+</resources>
