@@ -12,10 +12,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Both list and detail screens draw a dark (idealista_black) scrim behind the status
-        // bar, so force light (white) status bar icons everywhere instead of relying on the
-        // device's light/dark theme, which would make icons invisible on a dark background.
-        enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT))
+        // Both list and detail screens draw the idealista_primary (lime) color behind the
+        // status bar, so force dark status bar icons everywhere for legibility on that light
+        // background, instead of relying on the device's light/dark theme.
+        enableEdgeToEdge(statusBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT))
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }

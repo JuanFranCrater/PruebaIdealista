@@ -17,12 +17,12 @@
             android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:collapsedTitleTextColor="@color/white"
-            app:contentScrim="@color/idealista_black"
-            app:expandedTitleTextColor="@color/white"
+            app:collapsedTitleTextColor="@color/idealista_black"
+            app:contentScrim="@color/idealista_primary"
+            app:expandedTitleTextColor="@color/idealista_black"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:scrimAnimationDuration="200"
-            app:statusBarScrim="@color/idealista_black"
+            app:statusBarScrim="@color/idealista_primary"
             app:toolbarId="@+id/toolbar">
 
             <androidx.viewpager2.widget.ViewPager2

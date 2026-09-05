@@ -13,8 +13,8 @@
         <item name="colorSurface">@color/white</item>
         <item name="android:textColorPrimary">@color/idealista_black</item>
         <item name="android:textColorSecondary">@color/idealista_gray</item>
-        <item name="android:statusBarColor">@color/idealista_black</item>
-        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">@color/idealista_primary</item>
+        <item name="android:windowLightStatusBar">true</item>
         <item name="materialCardViewStyle">@style/Widget.Idealista.CardView</item>
     </style>
 
