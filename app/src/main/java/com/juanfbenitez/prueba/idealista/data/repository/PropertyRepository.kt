@@ -6,8 +6,9 @@ import com.juanfbenitez.prueba.idealista.data.api.model.PropertyDetailDTO
 import com.juanfbenitez.prueba.idealista.data.db.FavoriteDao
 import com.juanfbenitez.prueba.idealista.data.db.FavoriteEntity
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class PropertyRepository(
+class PropertyRepository @Inject constructor(
     private val api: IdealistaApi,
     private val favoriteDao: FavoriteDao
 ) {

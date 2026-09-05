@@ -1,5 +1,6 @@
 package com.juanfbenitez.prueba.idealista.ui.detail.compose
 
+import android.app.Activity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -25,9 +26,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.juanfbenitez.prueba.idealista.di.Dependencies
 import com.juanfbenitez.prueba.idealista.ui.detail.PropertyDetailViewModel
-import com.juanfbenitez.prueba.idealista.ui.detail.PropertyDetailViewModelFactory
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.android.components.ActivityComponent
+
+/** Exposes the Hilt-generated assisted factory for [PropertyDetailViewModel] to Compose code, which
+ * cannot use constructor injection like the Fragments do. */
+@EntryPoint
+@InstallIn(ActivityComponent::class)
+interface PropertyDetailViewModelFactoryEntryPoint {
+    fun propertyDetailViewModelFactory(): PropertyDetailViewModel.Factory
+}
 
 /**
  * Compose panel that shows the property detail as a bottom sheet-style drawer on top of the
@@ -90,12 +101,15 @@ fun PropertyDetailDrawer(
                     shadowElevation = 8.dp
                 ) {
                     val context = LocalContext.current
+                    val assistedFactory = remember(context) {
+                        EntryPointAccessors.fromActivity(
+                            context as Activity,
+                            PropertyDetailViewModelFactoryEntryPoint::class.java
+                        ).propertyDetailViewModelFactory()
+                    }
                     val detailViewModel: PropertyDetailViewModel = viewModel(
                         key = "drawer_detail_$code",
-                        factory = PropertyDetailViewModelFactory(
-                            Dependencies.providePropertyRepository(context),
-                            code
-                        )
+                        factory = PropertyDetailViewModel.provideFactory(assistedFactory, code)
                     )
                     val uiState by detailViewModel.uiState.collectAsStateWithLifecycle()
                     PropertyDetailScreen(

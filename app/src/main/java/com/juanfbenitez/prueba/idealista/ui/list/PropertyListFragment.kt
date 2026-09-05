@@ -18,21 +18,23 @@ import com.juanfbenitez.prueba.idealista.R
 import com.juanfbenitez.prueba.idealista.data.prefs.DetailDisplayMode
 import com.juanfbenitez.prueba.idealista.data.prefs.DetailDisplayPreferences
 import com.juanfbenitez.prueba.idealista.databinding.FragmentPropertyListBinding
-import com.juanfbenitez.prueba.idealista.di.Dependencies
 import com.juanfbenitez.prueba.idealista.ui.detail.compose.PropertyDetailDrawer
 import com.juanfbenitez.prueba.idealista.ui.theme.PruebaIdealistaTheme
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class PropertyListFragment : Fragment() {
 
     private var _binding: FragmentPropertyListBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: PropertyListViewModel by viewModels {
-        PropertyListViewModelFactory(Dependencies.providePropertyRepository(requireContext()))
-    }
+    private val viewModel: PropertyListViewModel by viewModels()
+
+    @Inject
+    lateinit var detailDisplayPreferences: DetailDisplayPreferences
 
     private lateinit var pagerAdapter: PropertyPagerAdapter
-    private lateinit var detailDisplayPreferences: DetailDisplayPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,7 +47,6 @@ class PropertyListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        detailDisplayPreferences = Dependencies.provideDetailDisplayPreferences(requireContext())
         setupStatusBarInsets()
         setupOperationTabs()
         setupToolbar()

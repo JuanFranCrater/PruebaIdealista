@@ -12,9 +12,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.juanfbenitez.prueba.idealista.di.Dependencies
 import com.juanfbenitez.prueba.idealista.ui.detail.compose.PropertyDetailScreen
 import com.juanfbenitez.prueba.idealista.ui.theme.PruebaIdealistaTheme
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 /**
  * Dedicated full-screen presentation of the property detail. The screen itself is entirely
@@ -22,11 +23,16 @@ import com.juanfbenitez.prueba.idealista.ui.theme.PruebaIdealistaTheme
  * delegating all rendering to the [PropertyDetailScreen] asset shared with the drawer
  * presentation embedded in the list screen.
  */
+@AndroidEntryPoint
 class PropertyDetailFragment : Fragment() {
 
     private val args: PropertyDetailFragmentArgs by navArgs()
+
+    @Inject
+    lateinit var viewModelFactory: PropertyDetailViewModel.Factory
+
     private val viewModel: PropertyDetailViewModel by viewModels {
-        PropertyDetailViewModelFactory(Dependencies.providePropertyRepository(requireContext()), args.propertyCode)
+        PropertyDetailViewModel.provideFactory(viewModelFactory, args.propertyCode)
     }
 
     override fun onCreateView(

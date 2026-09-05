@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.google.devtools.ksp)
     alias(libs.plugins.jetbrains.kotlin.plugin.serialization)
     alias(libs.plugins.androidx.navigation.safeargs)
+    alias(libs.plugins.hilt.android)
 }
 
 android {
@@ -82,6 +83,10 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.play.services.location)
     implementation(libs.retrofit)
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.fragment)
+    implementation(libs.androidx.hilt.navigation.compose)
+    ksp(libs.hilt.compiler)
     testImplementation(libs.androidx.core)
     testImplementation(libs.androidx.junit)
     testImplementation(libs.junit)

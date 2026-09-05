@@ -3,13 +3,17 @@ package com.juanfbenitez.prueba.idealista.ui.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.juanfbenitez.prueba.idealista.data.api.model.PropertyDTO
-import com.juanfbenitez.prueba.idealista.data.repository.PropertyRepository
+import com.juanfbenitez.prueba.idealista.domain.usecase.GetAllFavoritesUseCase
+import com.juanfbenitez.prueba.idealista.domain.usecase.GetPropertyListUseCase
+import com.juanfbenitez.prueba.idealista.domain.usecase.ToggleFavoriteUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 sealed class PropertyListUiState {
     object Loading : PropertyListUiState()
@@ -28,8 +32,11 @@ object PropertyOperation {
     const val RENT = "rent"
 }
 
-class PropertyListViewModel(
-    private val repository: PropertyRepository
+@HiltViewModel
+class PropertyListViewModel @Inject constructor(
+    private val getPropertyListUseCase: GetPropertyListUseCase,
+    private val getAllFavoritesUseCase: GetAllFavoritesUseCase,
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase
 ) : ViewModel() {
 
     private val _properties = MutableStateFlow<List<PropertyDTO>?>(null)
@@ -51,7 +58,7 @@ class PropertyListViewModel(
      * swipeable ViewPager2 (Buy/Rent) observes only the properties it needs to show.
      */
     fun observeProperties(operation: String): Flow<PropertyListUiState> =
-        combine(_properties, repository.getAllFavorites(), _loadError) { properties, favorites, error ->
+        combine(_properties, getAllFavoritesUseCase(), _loadError) { properties, favorites, error ->
             when {
                 error != null -> PropertyListUiState.Error(error)
                 properties == null -> PropertyListUiState.Loading
@@ -75,7 +82,7 @@ class PropertyListViewModel(
     fun loadProperties() {
         viewModelScope.launch {
             try {
-                val properties = repository.getPropertyList()
+                val properties = getPropertyListUseCase()
                 _properties.value = properties
             } catch (e: Exception) {
                 _loadError.value = e.message ?: "Unknown error"
@@ -89,7 +96,7 @@ class PropertyListViewModel(
 
     fun toggleFavorite(propertyCode: String) {
         viewModelScope.launch {
-            repository.toggleFavorite(propertyCode)
+            toggleFavoriteUseCase(propertyCode)
         }
     }
 

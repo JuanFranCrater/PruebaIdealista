@@ -3,9 +3,12 @@ package com.juanfbenitez.prueba.idealista.data.prefs
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * How the property detail screen should be presented when a property is tapped from the list.
@@ -30,7 +33,8 @@ enum class DetailDisplayMode(val prefValue: String) {
  * [StateFlow] so any screen currently on display (e.g. the list screen hosting the drawer) can
  * react immediately when the user changes the setting from the toolbar's gear icon menu.
  */
-class DetailDisplayPreferences(context: Context) {
+@Singleton
+class DetailDisplayPreferences @Inject constructor(@ApplicationContext context: Context) {
 
     private val prefs: SharedPreferences =
         context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)

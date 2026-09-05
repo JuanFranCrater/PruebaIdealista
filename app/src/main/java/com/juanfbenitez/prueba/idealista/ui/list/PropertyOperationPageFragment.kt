@@ -14,15 +14,18 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.juanfbenitez.prueba.idealista.data.prefs.DetailDisplayMode
+import com.juanfbenitez.prueba.idealista.data.prefs.DetailDisplayPreferences
 import com.juanfbenitez.prueba.idealista.databinding.FragmentPropertyPageBinding
-import com.juanfbenitez.prueba.idealista.di.Dependencies
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * A single swipeable page of the property list (one per "operation": sale/rent). Shares the
  * [PropertyListViewModel] instance with the parent [PropertyListFragment] so both pages read
  * from the same underlying data/favorites, each filtering to its own operation.
  */
+@AndroidEntryPoint
 class PropertyOperationPageFragment : Fragment() {
 
     private var _binding: FragmentPropertyPageBinding? = null
@@ -33,9 +36,11 @@ class PropertyOperationPageFragment : Fragment() {
     }
 
     private val viewModel: PropertyListViewModel by viewModels(
-        ownerProducer = { requireParentFragment() },
-        factoryProducer = { PropertyListViewModelFactory(Dependencies.providePropertyRepository(requireContext())) }
+        ownerProducer = { requireParentFragment() }
     )
+
+    @Inject
+    lateinit var detailDisplayPreferences: DetailDisplayPreferences
 
     private lateinit var adapter: PropertyAdapter
 
@@ -55,7 +60,6 @@ class PropertyOperationPageFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        val detailDisplayPreferences = Dependencies.provideDetailDisplayPreferences(requireContext())
         adapter = PropertyAdapter(
             onPropertyClick = { propertyCode ->
                 when (detailDisplayPreferences.mode.value) {
