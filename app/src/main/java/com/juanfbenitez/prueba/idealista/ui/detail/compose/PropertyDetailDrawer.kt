@@ -1,6 +1,8 @@
 package com.juanfbenitez.prueba.idealista.ui.detail.compose
 
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -38,6 +40,15 @@ import dagger.hilt.android.components.ActivityComponent
 @InstallIn(ActivityComponent::class)
 interface PropertyDetailViewModelFactoryEntryPoint {
     fun propertyDetailViewModelFactory(): PropertyDetailViewModel.Factory
+}
+
+/** Unwraps context wrappers (such as Hilt's `ViewComponentManager$FragmentContextWrapper`, used
+ * when this Compose content is hosted inside a Fragment's ComposeView) to find the underlying
+ * [Activity], since [EntryPointAccessors.fromActivity] requires the real Activity instance. */
+private tailrec fun Context.findActivity(): Activity = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> throw IllegalStateException("Expected an Activity context, but none was found: $this")
 }
 
 /**
@@ -103,7 +114,7 @@ fun PropertyDetailDrawer(
                     val context = LocalContext.current
                     val assistedFactory = remember(context) {
                         EntryPointAccessors.fromActivity(
-                            context as Activity,
+                            context.findActivity(),
                             PropertyDetailViewModelFactoryEntryPoint::class.java
                         ).propertyDetailViewModelFactory()
                     }
