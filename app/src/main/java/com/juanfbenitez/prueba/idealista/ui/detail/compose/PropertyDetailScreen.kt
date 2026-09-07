@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
@@ -36,6 +38,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -99,11 +104,11 @@ fun PropertyDetailScreen(
                         .statusBarsPadding()
                         .padding(8.dp)
                         .align(Alignment.TopStart)
-                        .background(Color.Black.copy(alpha = 0.35f), shape = androidx.compose.foundation.shape.CircleShape)
+                        .background(Color.Black.copy(alpha = 0.35f), shape = CircleShape)
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.back),
                         tint = Color.White
                     )
                 }
@@ -153,10 +158,10 @@ private fun PropertyImagePager(images: List<String>) {
         ) { page ->
             AsyncImage(
                 model = images[page],
-                contentDescription = androidx.compose.ui.res.stringResource(R.string.property_image),
-                contentScale = androidx.compose.ui.layout.ContentScale.Crop,
-                placeholder = androidx.compose.ui.res.painterResource(R.drawable.placeholder),
-                error = androidx.compose.ui.res.painterResource(R.drawable.placeholder),
+                contentDescription = stringResource(R.string.property_image),
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(R.drawable.placeholder),
+                error = painterResource(R.drawable.placeholder),
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -177,7 +182,7 @@ private fun PropertyImagePager(images: List<String>) {
 private fun PagerIndicator(pageCount: Int, currentPage: Int, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
-            .background(Color.Black.copy(alpha = 0.3f), shape = androidx.compose.foundation.shape.RoundedCornerShape(50))
+            .background(Color.Black.copy(alpha = 0.3f), shape = RoundedCornerShape(50))
             .padding(horizontal = 8.dp, vertical = 6.dp),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -189,7 +194,7 @@ private fun PagerIndicator(pageCount: Int, currentPage: Int, modifier: Modifier 
                     .size(if (selected) 8.dp else 6.dp)
                     .background(
                         color = if (selected) Color.White else Color.White.copy(alpha = 0.5f),
-                        shape = androidx.compose.foundation.shape.CircleShape
+                        shape = CircleShape
                     )
             )
         }
@@ -209,19 +214,19 @@ private fun PropertyDetailBody(
     if (showRemoveFavoriteDialog) {
         AlertDialog(
             onDismissRequest = { showRemoveFavoriteDialog = false },
-            title = { Text(androidx.compose.ui.res.stringResource(R.string.remove_favorite_title)) },
-            text = { Text(androidx.compose.ui.res.stringResource(R.string.remove_favorite_message)) },
+            title = { Text(stringResource(R.string.remove_favorite_title)) },
+            text = { Text(stringResource(R.string.remove_favorite_message)) },
             confirmButton = {
                 androidx.compose.material3.TextButton(onClick = {
                     showRemoveFavoriteDialog = false
                     onFavoriteClick()
                 }) {
-                    Text(androidx.compose.ui.res.stringResource(R.string.remove))
+                    Text(stringResource(R.string.remove))
                 }
             },
             dismissButton = {
                 androidx.compose.material3.TextButton(onClick = { showRemoveFavoriteDialog = false }) {
-                    Text(androidx.compose.ui.res.stringResource(R.string.cancel))
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
@@ -235,7 +240,7 @@ private fun PropertyDetailBody(
                 modifier = Modifier.padding(bottom = 12.dp)
             ) {
                 Text(
-                    text = androidx.compose.ui.res.stringResource(
+                    text = stringResource(
                         R.string.favorited_on,
                         dateFormat.format(Date(favorite.dateFavorited))
                     ),
@@ -254,7 +259,7 @@ private fun PropertyDetailBody(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = androidx.compose.ui.res.stringResource(
+                    text = stringResource(
                         R.string.price_format,
                         detail.price.amount,
                         detail.price.currencySuffix
@@ -290,7 +295,9 @@ private fun PropertyDetailBody(
             ) {
                 Icon(
                     imageVector = if (favorite != null) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                    contentDescription = androidx.compose.ui.res.stringResource(R.string.favorite),
+                    contentDescription = stringResource(
+                        if (favorite != null) R.string.remove_from_favorites else R.string.add_to_favorites
+                    ),
                     tint = Color.Black
                 )
             }
@@ -301,25 +308,25 @@ private fun PropertyDetailBody(
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
             StatColumn(
                 value = characteristics?.rooms?.toString() ?: "-",
-                label = androidx.compose.ui.res.stringResource(R.string.rooms)
+                label = stringResource(R.string.rooms)
             )
             StatColumn(
                 value = characteristics?.bathrooms?.toString() ?: "-",
-                label = androidx.compose.ui.res.stringResource(R.string.bathrooms)
+                label = stringResource(R.string.bathrooms)
             )
             StatColumn(
-                value = androidx.compose.ui.res.stringResource(
+                value = stringResource(
                     R.string.area_format,
                     characteristics?.constructedArea?.toFloat() ?: 0f
                 ),
-                label = androidx.compose.ui.res.stringResource(R.string.size)
+                label = stringResource(R.string.size)
             )
         }
 
         HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = com.juanfbenitez.prueba.idealista.ui.theme.IdealistaDivider)
 
         Text(
-            text = androidx.compose.ui.res.stringResource(R.string.description),
+            text = stringResource(R.string.description),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
@@ -331,18 +338,18 @@ private fun PropertyDetailBody(
         HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = com.juanfbenitez.prueba.idealista.ui.theme.IdealistaDivider)
 
         Text(
-            text = androidx.compose.ui.res.stringResource(R.string.characteristics),
+            text = stringResource(R.string.characteristics),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
         Column(modifier = Modifier.padding(top = 8.dp)) {
-            val yes = androidx.compose.ui.res.stringResource(R.string.yes)
-            val no = androidx.compose.ui.res.stringResource(R.string.no)
+            val yes = stringResource(R.string.yes)
+            val no = stringResource(R.string.no)
             characteristics?.let {
-                CharacteristicLine(androidx.compose.ui.res.stringResource(R.string.lift), if (it.hasLift == true) yes else no)
-                CharacteristicLine(androidx.compose.ui.res.stringResource(R.string.exterior), if (it.isExterior == true) yes else no)
-                it.status?.let { status -> CharacteristicLine(androidx.compose.ui.res.stringResource(R.string.status), status) }
-                it.floor?.let { floor -> CharacteristicLine(androidx.compose.ui.res.stringResource(R.string.floor), floor) }
+                CharacteristicLine(stringResource(R.string.lift), if (it.hasLift == true) yes else no)
+                CharacteristicLine(stringResource(R.string.exterior), if (it.isExterior == true) yes else no)
+                it.status?.let { status -> CharacteristicLine(stringResource(R.string.status), status) }
+                it.floor?.let { floor -> CharacteristicLine(stringResource(R.string.floor), floor) }
             }
         }
     }
@@ -401,7 +408,7 @@ private fun ExpandableDescription(text: String, modifier: Modifier = Modifier) {
 
         if (isOverflowing || expanded) {
             Text(
-                text = androidx.compose.ui.res.stringResource(
+                text = stringResource(
                     if (expanded) R.string.show_less else R.string.show_more
                 ),
                 style = MaterialTheme.typography.labelLarge,

@@ -1,5 +1,6 @@
 package com.juanfbenitez.prueba.idealista.di
 
+import com.juanfbenitez.prueba.idealista.BuildConfig
 import com.juanfbenitez.prueba.idealista.data.api.IdealistaApi
 import dagger.Module
 import dagger.Provides
@@ -20,7 +21,11 @@ object NetworkModule {
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
         val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = if (BuildConfig.DEBUG) {
+                HttpLoggingInterceptor.Level.BODY
+            } else {
+                HttpLoggingInterceptor.Level.NONE
+            }
         }
         return OkHttpClient.Builder()
             .addInterceptor(logging)

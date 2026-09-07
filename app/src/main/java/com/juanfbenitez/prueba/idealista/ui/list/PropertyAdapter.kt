@@ -56,6 +56,9 @@ class PropertyAdapter(
                 favoriteButton.setImageResource(
                     if (item.isFavorite) R.drawable.ic_favorite else R.drawable.ic_favorite_border
                 )
+                favoriteButton.contentDescription = root.context.getString(
+                    if (item.isFavorite) R.string.remove_from_favorites else R.string.add_to_favorites
+                )
 
                 favoriteDateText.text = if (item.isFavorite && item.dateFavorited != null) {
                     root.context.getString(

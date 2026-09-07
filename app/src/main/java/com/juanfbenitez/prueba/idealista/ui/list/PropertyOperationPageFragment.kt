@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.juanfbenitez.prueba.idealista.R
 import com.juanfbenitez.prueba.idealista.data.prefs.DetailDisplayMode
 import com.juanfbenitez.prueba.idealista.data.prefs.DetailDisplayPreferences
 import com.juanfbenitez.prueba.idealista.databinding.FragmentPropertyPageBinding
@@ -85,13 +86,23 @@ class PropertyOperationPageFragment : Fragment() {
                     when (state) {
                         is PropertyListUiState.Loading -> {
                             binding.progressBar.isVisible = true
+                            binding.emptyText.isVisible = false
                         }
                         is PropertyListUiState.Success -> {
                             binding.progressBar.isVisible = false
                             adapter.submitList(state.properties)
+                            binding.emptyText.isVisible = state.properties.isEmpty()
+                            binding.emptyText.text = getString(
+                                if (operation == PropertyOperation.FAVORITES) {
+                                    R.string.empty_favorites
+                                } else {
+                                    R.string.empty_properties
+                                }
+                            )
                         }
                         is PropertyListUiState.Error -> {
                             binding.progressBar.isVisible = false
+                            binding.emptyText.isVisible = false
                             Toast.makeText(requireContext(), state.message, Toast.LENGTH_LONG).show()
                         }
                     }
