@@ -18,6 +18,19 @@
         <item name="materialCardViewStyle">@style/Widget.Idealista.CardView</item>
     </style>
 
+    <!--
+        Shown by the system (via androidx.core.splashscreen) while the process is cold-starting,
+        before MainActivity's first frame is drawn. windowSplashScreenAnimatedIcon accepts a plain
+        (non-animated) vector too - it's just displayed centered over the background color.
+        postSplashScreenTheme is swapped in automatically once SplashScreen#installSplashScreen()
+        is called from MainActivity, so the activity ends up on the regular app theme.
+    -->
+    <style name="Theme.PruebaIdealista.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/idealista_primary</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.PruebaIdealista</item>
+    </style>
+
     <style name="Widget.Idealista.CardView" parent="Widget.MaterialComponents.CardView">
         <item name="cardBackgroundColor">@color/white</item>
         <item name="cardCornerRadius">16dp</item>
