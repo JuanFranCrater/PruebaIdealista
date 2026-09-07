@@ -87,3 +87,28 @@ The following work was done after the initial MVP and is not reflected in the se
 *   [x] **`PropertyListViewModel.observeProperties`**: Filters by favorite status instead of `Property.operation` when the requested tab is `FAVORITES`, reusing the same favorites `Flow` all tabs already observe (so favoriting/unfavoriting anywhere updates all tabs live).
 *   [x] **`PropertyPagerAdapter`**: Now backs 3 ViewPager2 pages (sale, rent, favorites); `PropertyOperationPageFragment` required no changes since it's already parameterized by operation string.
 *   [x] **UI**: `PropertyListFragment`'s `TabLayoutMediator` labels the third tab via the new `tab_favorites` string resource.
+
+### Automated Test Coverage
+*   [x] **Domain use case tests**: `domain/src/test` covers all 5 use cases (`GetPropertyListUseCase`, `GetPropertyDetailUseCase`, `GetAllFavoritesUseCase`, `IsFavoriteUseCase`, `ToggleFavoriteUseCase`) against a hand-written `FakePropertyRepository`, following the `when {statement} then {result}` naming convention.
+*   [x] **Data-layer mapper tests**: `data/mapper/PropertyMappersTest` covers DTO→domain mapping for `PropertyDTO`/`PropertyDetailDTO`, including null values and multimedia handling.
+*   [x] **ViewModel tests**: `PropertyListViewModelTest` and `PropertyDetailViewModelTest`, backed by a `FakePropertyRepository` and `MainDispatcherRule` (swaps `Dispatchers.Main` for a `TestDispatcher`).
+*   [x] **Repository test**: `PropertyRepositoryImplTest`, backed by hand-written `FakeIdealistaApi`/`FakeFavoriteDao` test doubles (no mocking framework used anywhere in the suite).
+*   [x] **Adapter/prefs unit tests**: `PropertyDiffCallbackTest` (RecyclerView `DiffUtil` item/content comparison) and `DetailDisplayModeTest` (`fromPrefValue` fallback logic).
+*   [x] **Result**: 56 tests total across `:domain` and `:app`, all green (`:domain:test :app:testDebugUnitTest`).
+
+### Crash Fix: Compose + Hilt + Fragment Context
+*   [x] **Root cause**: `LocalContext.current` inside a Fragment-hosted `ComposeView` (`PropertyDetailDrawer`) is Hilt's `ViewComponentManager$FragmentContextWrapper`, not a raw `Activity`, so a direct `as Activity` cast threw `ClassCastException` on tapping a property.
+*   [x] **Fix**: Added a `Context.findActivity()` tailrec extension that unwraps the `ContextWrapper.baseContext` chain until it finds the real `Activity`, used where `EntryPointAccessors.fromActivity` needs the Activity instance.
+
+### UI/UX Polish
+*   [x] **Idealista brand theme**: `PruebaIdealistaTheme`'s Material3 color scheme now uses the Idealista brand palette (`IdealistaPrimary`/`IdealistaSecondary`/`IdealistaBlack`/etc.) instead of the default Material Purple scheme; `dynamicColor` defaults to `false` so Android 12+ wallpaper-based colors don't override the brand palette.
+*   [x] **Always-visible favorite prompt**: List item rows always show favorite-related text — the favorited date when saved, or a "Save this property to check later on your favorites list!" prompt (`favorite_prompt` string) when not, instead of hiding the text entirely.
+*   [x] **Remove-favorite confirmation dialog**: Both the XML list (`PropertyAdapter`, `AlertDialog`) and the Compose detail screen (`PropertyDetailScreen`, Material3 `AlertDialog`) now confirm with the user before unfavoriting a property; adding a favorite still happens immediately with no prompt.
+*   [x] **Empty-state text**: `fragment_property_page.xml` gained an `emptyText` view, shown by `PropertyOperationPageFragment` when a tab's list is empty (favorites-specific vs. generic message via `empty_favorites`/`empty_properties` strings).
+*   [x] **Drawer back-press handling**: `PropertyListFragment` registers an `OnBackPressedCallback`, enabled only while a property is selected for the drawer, so the system/device back button closes the open drawer instead of navigating away or exiting the app.
+*   [x] **Accessibility**: Favorite icon content descriptions now dynamically announce "Add to favorites"/"Remove from favorites" based on state (XML adapter + Compose), and the Compose detail screen's back `IconButton` has a proper "Back" content description instead of `null`.
+
+### Cleanup & Hardening
+*   [x] **Unused asset removal**: Deleted orphan `bg_badge_lime.xml` drawable and unused `detail_display_title` string, `black` color, `Widget.Idealista.Fab` style; later also removed unused `retry`/`loading`/`error_loading` strings and redundant XML `android:background`/`android:label` attributes after confirming they had no wired behavior.
+*   [x] **Debug-only network logging**: `di/NetworkModule`'s `HttpLoggingInterceptor` now logs at `BODY` level only in debug builds (`BuildConfig.DEBUG`), `NONE` in release, avoiding leaking request/response bodies to logcat in production; required enabling `buildFeatures.buildConfig = true` (off by default on AGP 8+).
+*   [x] **Fully-qualified reference cleanup**: Replaced inline fully-qualified names (e.g. `androidx.compose.ui.res.stringResource(...)`, `com.juanfbenitez.prueba.idealista.ui.theme.IdealistaPrimary`, `android.content.Context`) across `PropertyDetailScreen`, `PropertyDetailDrawer`, and `PropertyAdapter` with proper top-of-file imports.
