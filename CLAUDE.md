@@ -15,7 +15,8 @@ and mark/unmark favorites (persisted locally with Room).
 - **Architecture**: MVVM + Clean Architecture, with a standalone `:domain` Gradle module.
 - **DI**: Hilt (KSP annotation processing).
 - **Networking**: Retrofit + OkHttp + Moshi, against `https://idealista.github.io/android-challenge/`.
-- **Persistence**: Room (`FavoriteEntity` — just `propertyCode` + `dateFavorited` timestamp).
+- **Persistence**: Room (`FavoriteEntity` — just `propertyCode` + `dateFavorited` timestamp;
+  currently at DB `version = 2`, see `data/db/Migrations.kt`).
 - **Images**: Coil.
 - **Min/target/compile SDK**: 24 / 37 / 37. Java 11 source/target compatibility.
 
@@ -47,7 +48,7 @@ If a use case needs a platform type, put a domain model in `:domain` and map to/
 
 ```
 data/api        — IdealistaApi (Retrofit interface), DTOs (PropertyDTO, PropertyDetailDTO, ...)
-data/db         — IdealistaDatabase (Room), FavoriteEntity, FavoriteDao
+data/db         — IdealistaDatabase (Room, v2), FavoriteEntity, FavoriteDao, Migrations (MIGRATION_1_2)
 data/mapper     — PropertyMappers.kt: DTO/Entity -> domain model conversions
 data/prefs      — DetailDisplayPreferences (SharedPreferences-backed StateFlow of
                    DetailDisplayMode: DRAWER vs FULL_SCREEN)
@@ -100,6 +101,16 @@ ui/theme        — PruebaIdealistaTheme, Color.kt (Idealista brand palette)
 - **`getPropertyDetail()` is a static, non-parameterized endpoint** (`IdealistaApi`) — it
   always returns the same `detail.json` regardless of `propertyCode`. This is a known
   limitation of the demo API, not a bug to silently "fix" by inventing a real endpoint.
+- **Room migrations recreate the table rather than using `ALTER TABLE ... DROP COLUMN`.**
+  `DROP COLUMN` was only added in SQLite 3.35.0 (2021); this app's `minSdk = 24` devices bundle
+  much older SQLite versions that don't support it. `data/db/Migrations.kt`'s `MIGRATION_1_2`
+  (which dropped the dead `FavoriteEntity.isFavorite` column) instead does
+  create-new-table → copy data → drop old → rename, which only needs `CREATE TABLE`/`RENAME TO`
+  — supported since early SQLite and Room's own documented approach for such migrations. Follow
+  this pattern for any future destructive schema change, don't reach for `DROP COLUMN` directly.
+- **`MainActivity` is locked to `android:screenOrientation="portrait"`** in the manifest — the
+  XML list screen and Compose detail/drawer were never built or tested for landscape/rotation,
+  so don't remove this without also addressing rotation support.
 
 ## Testing
 
