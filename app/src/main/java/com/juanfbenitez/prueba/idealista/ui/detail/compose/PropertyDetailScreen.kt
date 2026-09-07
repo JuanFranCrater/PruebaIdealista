@@ -64,8 +64,8 @@ private val FabSize = 56.dp
 fun PropertyDetailScreen(
     uiState: PropertyDetailUiState,
     onFavoriteClick: () -> Unit,
+    modifier: Modifier = Modifier,
     onBackClick: (() -> Unit)? = null,
-    modifier: Modifier = Modifier
 ) {
     Surface(modifier = modifier.fillMaxSize(), color = Color.White) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -179,7 +179,7 @@ private fun PagerIndicator(pageCount: Int, currentPage: Int, modifier: Modifier 
         modifier = modifier
             .background(Color.Black.copy(alpha = 0.3f), shape = androidx.compose.foundation.shape.RoundedCornerShape(50))
             .padding(horizontal = 8.dp, vertical = 6.dp),
-        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(6.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         repeat(pageCount) { index ->

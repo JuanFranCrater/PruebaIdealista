@@ -10,6 +10,7 @@ import javax.inject.Singleton
 
 /** Binds the domain [PropertyRepository] abstraction to its `data`-layer implementation, so
  * use cases can depend on the interface without knowing about [PropertyRepositoryImpl]. */
+@Suppress("unused")
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {

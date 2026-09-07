@@ -2,11 +2,8 @@
     <string name="app_name">PruebaIdealista</string>
     <string name="favorite">Favorite</string>
     <string name="property_image">Property image</string>
-    <string name="property_details_format">%1$d beds | %2$d baths | %3$.0f m²</string>
+    <string name="property_details_format">%1$d rooms | %2$d baths | %3$.0f m²</string>
     <string name="price_format">%1$,.0f %2$s</string>
-    <string name="loading">Loading properties...</string>
-    <string name="error_loading">Error loading properties</string>
-    <string name="retry">Retry</string>
     <string name="rooms">Rooms</string>
     <string name="bathrooms">Bathrooms</string>
     <string name="size">Size</string>
