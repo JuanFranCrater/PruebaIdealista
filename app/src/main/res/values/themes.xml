@@ -26,11 +26,6 @@
         <item name="strokeWidth">1dp</item>
     </style>
 
-    <style name="Widget.Idealista.Fab" parent="Widget.MaterialComponents.FloatingActionButton">
-        <item name="backgroundTint">@color/idealista_primary</item>
-        <item name="rippleColor">@color/idealista_primary_dark</item>
-    </style>
-
     <style name="TextAppearance.Idealista.Price" parent="TextAppearance.MaterialComponents.Headline6">
         <item name="android:textColor">@color/idealista_black</item>
         <item name="android:textStyle">bold</item>

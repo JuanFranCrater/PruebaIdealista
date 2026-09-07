@@ -86,12 +86,10 @@
             android:paddingBottom="16dp"
             android:textColor="@color/idealista_gray"
             android:textSize="12sp"
-            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/detailsText"
-            tools:text="Favorited on 05/09/2026"
-            tools:visibility="visible" />
+            tools:text="Favorited on 05/09/2026" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
