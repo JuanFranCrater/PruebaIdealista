@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.PopupMenu
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -11,7 +12,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.juanfbenitez.prueba.idealista.R
@@ -22,6 +26,7 @@ import com.juanfbenitez.prueba.idealista.ui.detail.compose.PropertyDetailDrawer
 import com.juanfbenitez.prueba.idealista.ui.theme.PruebaIdealistaTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class PropertyListFragment : Fragment() {
@@ -51,6 +56,7 @@ class PropertyListFragment : Fragment() {
         setupOperationTabs()
         setupToolbar()
         setupDetailDrawer()
+        setupBackPressHandling()
     }
 
     private fun setupStatusBarInsets() {
@@ -136,6 +142,29 @@ class PropertyListFragment : Fragment() {
                         propertyCode = selectedCode,
                         onDismiss = { viewModel.clearDrawerSelection() }
                     )
+                }
+            }
+        }
+    }
+
+    /**
+     * Makes the device/system back button close the detail drawer instead of leaving the
+     * screen (or app) when it's open, mirroring the drawer's own scrim-tap-to-dismiss behavior.
+     * The callback only intercepts back presses while a property is selected for the drawer;
+     * otherwise it's disabled so back falls through to the default Fragment/Activity handling.
+     */
+    private fun setupBackPressHandling() {
+        val backPressedCallback = object : OnBackPressedCallback(false) {
+            override fun handleOnBackPressed() {
+                viewModel.clearDrawerSelection()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backPressedCallback)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.selectedPropertyForDrawer.collect { selectedCode ->
+                    backPressedCallback.isEnabled = selectedCode != null
                 }
             }
         }
