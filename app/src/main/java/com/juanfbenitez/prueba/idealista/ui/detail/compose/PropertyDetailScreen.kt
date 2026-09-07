@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -203,6 +204,28 @@ private fun PropertyDetailBody(
 ) {
     val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()) }
     val characteristics: PropertyCharacteristics? = detail.characteristics
+    var showRemoveFavoriteDialog by remember { mutableStateOf(false) }
+
+    if (showRemoveFavoriteDialog) {
+        AlertDialog(
+            onDismissRequest = { showRemoveFavoriteDialog = false },
+            title = { Text(androidx.compose.ui.res.stringResource(R.string.remove_favorite_title)) },
+            text = { Text(androidx.compose.ui.res.stringResource(R.string.remove_favorite_message)) },
+            confirmButton = {
+                androidx.compose.material3.TextButton(onClick = {
+                    showRemoveFavoriteDialog = false
+                    onFavoriteClick()
+                }) {
+                    Text(androidx.compose.ui.res.stringResource(R.string.remove))
+                }
+            },
+            dismissButton = {
+                androidx.compose.material3.TextButton(onClick = { showRemoveFavoriteDialog = false }) {
+                    Text(androidx.compose.ui.res.stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
 
     Column(modifier = Modifier.padding(16.dp)) {
         if (favorite != null) {
@@ -251,7 +274,13 @@ private fun PropertyDetailBody(
             // Fixed in place under the photo (part of the scrolling content), not a floating
             // action button, so it doesn't overlap the image or content while scrolling.
             IconButton(
-                onClick = onFavoriteClick,
+                onClick = {
+                    if (favorite != null) {
+                        showRemoveFavoriteDialog = true
+                    } else {
+                        onFavoriteClick()
+                    }
+                },
                 modifier = Modifier
                     .size(FabSize)
                     .background(

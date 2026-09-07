@@ -2,10 +2,10 @@ package com.juanfbenitez.prueba.idealista.ui.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.core.view.isVisible
 import coil.load
 import com.juanfbenitez.prueba.idealista.R
 import com.juanfbenitez.prueba.idealista.databinding.ItemPropertyBinding
@@ -57,17 +57,36 @@ class PropertyAdapter(
                     if (item.isFavorite) R.drawable.ic_favorite else R.drawable.ic_favorite_border
                 )
 
-                favoriteDateText.isVisible = item.isFavorite && item.dateFavorited != null
-                if (item.isFavorite && item.dateFavorited != null) {
-                    favoriteDateText.text = root.context.getString(
+                favoriteDateText.text = if (item.isFavorite && item.dateFavorited != null) {
+                    root.context.getString(
                         R.string.favorited_on,
                         dateFormat.format(Date(item.dateFavorited))
                     )
+                } else {
+                    root.context.getString(R.string.favorite_prompt)
                 }
 
                 root.setOnClickListener { onPropertyClick(property.propertyCode) }
-                favoriteButton.setOnClickListener { onFavoriteClick(property.propertyCode) }
+                favoriteButton.setOnClickListener {
+                    if (item.isFavorite) {
+                        confirmRemoveFavorite(root.context) { onFavoriteClick(property.propertyCode) }
+                    } else {
+                        onFavoriteClick(property.propertyCode)
+                    }
+                }
             }
+        }
+
+        private fun confirmRemoveFavorite(context: android.content.Context, onConfirm: () -> Unit) {
+            AlertDialog.Builder(context)
+                .setTitle(R.string.remove_favorite_title)
+                .setMessage(R.string.remove_favorite_message)
+                .setPositiveButton(R.string.remove) { dialog, _ ->
+                    onConfirm()
+                    dialog.dismiss()
+                }
+                .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
+                .show()
         }
     }
 
