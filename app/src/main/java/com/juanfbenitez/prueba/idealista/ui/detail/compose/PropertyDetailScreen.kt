@@ -30,6 +30,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,6 +50,12 @@ import com.juanfbenitez.prueba.idealista.domain.model.Favorite
 import com.juanfbenitez.prueba.idealista.domain.model.PropertyCharacteristics
 import com.juanfbenitez.prueba.idealista.domain.model.PropertyDetail
 import com.juanfbenitez.prueba.idealista.ui.detail.PropertyDetailUiState
+import com.juanfbenitez.prueba.idealista.ui.theme.IdealistaBadgeLime
+import com.juanfbenitez.prueba.idealista.ui.theme.IdealistaDivider
+import com.juanfbenitez.prueba.idealista.ui.theme.IdealistaGray
+import com.juanfbenitez.prueba.idealista.ui.theme.IdealistaGrayDark
+import com.juanfbenitez.prueba.idealista.ui.theme.IdealistaPrimary
+import com.juanfbenitez.prueba.idealista.ui.theme.IdealistaSecondary
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -217,7 +224,7 @@ private fun PropertyDetailBody(
             title = { Text(stringResource(R.string.remove_favorite_title)) },
             text = { Text(stringResource(R.string.remove_favorite_message)) },
             confirmButton = {
-                androidx.compose.material3.TextButton(onClick = {
+                TextButton(onClick = {
                     showRemoveFavoriteDialog = false
                     onFavoriteClick()
                 }) {
@@ -225,7 +232,7 @@ private fun PropertyDetailBody(
                 }
             },
             dismissButton = {
-                androidx.compose.material3.TextButton(onClick = { showRemoveFavoriteDialog = false }) {
+                TextButton(onClick = { showRemoveFavoriteDialog = false }) {
                     Text(stringResource(R.string.cancel))
                 }
             }
@@ -235,7 +242,7 @@ private fun PropertyDetailBody(
     Column(modifier = Modifier.padding(16.dp)) {
         if (favorite != null) {
             Surface(
-                color = com.juanfbenitez.prueba.idealista.ui.theme.IdealistaBadgeLime,
+                color = IdealistaBadgeLime,
                 shape = MaterialTheme.shapes.small,
                 modifier = Modifier.padding(bottom = 12.dp)
             ) {
@@ -271,7 +278,7 @@ private fun PropertyDetailBody(
                 Text(
                     text = detail.propertyType.replaceFirstChar { it.uppercase() },
                     style = MaterialTheme.typography.bodyMedium,
-                    color = com.juanfbenitez.prueba.idealista.ui.theme.IdealistaGrayDark,
+                    color = IdealistaGrayDark,
                     modifier = Modifier.padding(top = 4.dp)
                 )
             }
@@ -289,8 +296,8 @@ private fun PropertyDetailBody(
                 modifier = Modifier
                     .size(FabSize)
                     .background(
-                        color = com.juanfbenitez.prueba.idealista.ui.theme.IdealistaPrimary,
-                        shape = androidx.compose.foundation.shape.CircleShape
+                        color = IdealistaPrimary,
+                        shape = CircleShape
                     )
             ) {
                 Icon(
@@ -303,7 +310,7 @@ private fun PropertyDetailBody(
             }
         }
 
-        HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = com.juanfbenitez.prueba.idealista.ui.theme.IdealistaDivider)
+        HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = IdealistaDivider)
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
             StatColumn(
@@ -323,7 +330,7 @@ private fun PropertyDetailBody(
             )
         }
 
-        HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = com.juanfbenitez.prueba.idealista.ui.theme.IdealistaDivider)
+        HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = IdealistaDivider)
 
         Text(
             text = stringResource(R.string.description),
@@ -335,7 +342,7 @@ private fun PropertyDetailBody(
             modifier = Modifier.padding(top = 8.dp)
         )
 
-        HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = com.juanfbenitez.prueba.idealista.ui.theme.IdealistaDivider)
+        HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = IdealistaDivider)
 
         Text(
             text = stringResource(R.string.characteristics),
@@ -365,7 +372,7 @@ private fun StatColumn(value: String, label: String) {
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,
-            color = com.juanfbenitez.prueba.idealista.ui.theme.IdealistaGray,
+            color = IdealistaGray,
             modifier = Modifier.padding(top = 2.dp)
         )
     }
@@ -376,7 +383,7 @@ private fun CharacteristicLine(label: String, value: String) {
     Text(
         text = "$label: $value",
         style = MaterialTheme.typography.bodyMedium,
-        color = com.juanfbenitez.prueba.idealista.ui.theme.IdealistaGrayDark,
+        color = IdealistaGrayDark,
         modifier = Modifier.padding(bottom = 4.dp)
     )
 }
@@ -396,7 +403,7 @@ private fun ExpandableDescription(text: String, modifier: Modifier = Modifier) {
         Text(
             text = text,
             style = MaterialTheme.typography.bodyMedium,
-            color = com.juanfbenitez.prueba.idealista.ui.theme.IdealistaGrayDark,
+            color = IdealistaGrayDark,
             maxLines = if (expanded) Int.MAX_VALUE else CollapsedDescriptionMaxLines,
             overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
             onTextLayout = { result ->
@@ -413,7 +420,7 @@ private fun ExpandableDescription(text: String, modifier: Modifier = Modifier) {
                 ),
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Bold,
-                color = com.juanfbenitez.prueba.idealista.ui.theme.IdealistaSecondary,
+                color = IdealistaSecondary,
                 modifier = Modifier
                     .padding(top = 4.dp)
                     .clickable { expanded = !expanded }

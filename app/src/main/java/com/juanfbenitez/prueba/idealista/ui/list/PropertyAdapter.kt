@@ -1,5 +1,6 @@
 package com.juanfbenitez.prueba.idealista.ui.list
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
@@ -80,7 +81,7 @@ class PropertyAdapter(
             }
         }
 
-        private fun confirmRemoveFavorite(context: android.content.Context, onConfirm: () -> Unit) {
+        private fun confirmRemoveFavorite(context: Context, onConfirm: () -> Unit) {
             AlertDialog.Builder(context)
                 .setTitle(R.string.remove_favorite_title)
                 .setMessage(R.string.remove_favorite_message)
