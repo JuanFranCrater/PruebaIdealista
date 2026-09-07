@@ -47,7 +47,6 @@ class PropertyRepositoryImpl @Inject constructor(
             favoriteDao.insertFavorite(
                 FavoriteEntity(
                     propertyCode = propertyCode,
-                    isFavorite = true,
                     dateFavorited = System.currentTimeMillis()
                 )
             )

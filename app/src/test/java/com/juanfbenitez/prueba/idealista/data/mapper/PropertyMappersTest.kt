@@ -183,7 +183,7 @@ class PropertyMappersTest {
 
     @Test
     fun `when mapping a FavoriteEntity then returns a Favorite with the same fields`() {
-        val entity = FavoriteEntity(propertyCode = "7", isFavorite = true, dateFavorited = 123456L)
+        val entity = FavoriteEntity(propertyCode = "7", dateFavorited = 123456L)
 
         val result = entity.toDomain()
 

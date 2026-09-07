@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.juanfbenitez.prueba.idealista.data.db.FavoriteDao
 import com.juanfbenitez.prueba.idealista.data.db.IdealistaDatabase
+import com.juanfbenitez.prueba.idealista.data.db.Migrations
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,7 +24,9 @@ object DatabaseModule {
             context,
             IdealistaDatabase::class.java,
             "idealista_database"
-        ).build()
+        )
+            .addMigrations(Migrations.MIGRATION_1_2)
+            .build()
     }
 
     @Provides

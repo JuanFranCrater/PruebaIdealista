@@ -98,7 +98,7 @@ class PropertyRepositoryImplTest {
 
     @Test
     fun `when the dao has favorites then getAllFavorites emits them mapped to domain models`() = runTest {
-        favoriteDao.insertFavorite(FavoriteEntity("1", isFavorite = true, dateFavorited = 111L))
+        favoriteDao.insertFavorite(FavoriteEntity("1", dateFavorited = 111L))
 
         val result = repository.getAllFavorites().first()
 
@@ -115,7 +115,7 @@ class PropertyRepositoryImplTest {
 
     @Test
     fun `when a property is favorited then isFavorite returns true`() = runTest {
-        favoriteDao.insertFavorite(FavoriteEntity("1", isFavorite = true, dateFavorited = 111L))
+        favoriteDao.insertFavorite(FavoriteEntity("1", dateFavorited = 111L))
 
         val result = repository.isFavorite("1")
 
@@ -131,7 +131,7 @@ class PropertyRepositoryImplTest {
 
     @Test
     fun `when toggling an already favorited property then it is removed`() = runTest {
-        favoriteDao.insertFavorite(FavoriteEntity("1", isFavorite = true, dateFavorited = 111L))
+        favoriteDao.insertFavorite(FavoriteEntity("1", dateFavorited = 111L))
 
         repository.toggleFavorite("1")
 
@@ -145,7 +145,7 @@ class PropertyRepositoryImplTest {
         repository.toggleFavorite("1")
 
         val stored = favoriteDao.getFavoriteById("1")
-        assertEquals(true, stored?.isFavorite)
+        assertEquals("1", stored?.propertyCode)
         assertTrue((stored?.dateFavorited ?: 0L) >= before)
     }
 }

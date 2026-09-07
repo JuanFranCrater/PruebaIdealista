@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">PruebaIdealista</string>
+    <string name="toolbar_title">Juan Fran\'s idealista</string>
     <string name="favorite">Favorite</string>
     <string name="property_image">Property image</string>
     <string name="property_details_format">%1$d rooms | %2$d baths | %3$.0f m²</string>
